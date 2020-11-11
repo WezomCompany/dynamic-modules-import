@@ -49,9 +49,13 @@
     "url": "https://github.com/WezomAgency/dynamic-modules-import/issues"
   },
   "homepage": "https://github.com/WezomAgency/dynamic-modules-import#readme",
+  "peerDependencies": {
+    "jquery": "^3.4.1"
+  },
   "devDependencies": {
     "@stripped-ui/eslint-config-ts": "^0.1.0-beta.0",
     "@types/jest": "^25.2.1",
+    "@types/jquery": "^3.5.4",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "babel-eslint": "^10.1.0",
