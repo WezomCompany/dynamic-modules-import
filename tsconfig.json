@@ -18,13 +18,18 @@
 		"strict": true,
 		"strictNullChecks": true,
 		"suppressImplicitAnyIndexErrors": true,
-		"target": "es5"
+		"target": "es6"
 	},
 	"include": [
 		"src/**/*.ts"
 	],
 	"exclude": [
 		"./node_modules",
+		"**/__tests__/**",
+		"**/__specs__/**",
+		"**/tests/**",
+		"**/specs/**",
+		"**/*.spec.ts",
 		"**/*.test.ts"
 	]
 }
