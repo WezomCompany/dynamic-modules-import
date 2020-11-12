@@ -4,91 +4,160 @@ import JQuery from 'jquery';
 // Types
 // -----------------------------------------------------------------------------
 
-interface DynamicModulesImportModule {
+interface DMIModuleStats {
+	moduleName: string;
+}
+
+interface DMIModule {
 	fileName: string;
-	filterSelector: JQuery.Selector;
-	importCondition(
+	filter:
+		| JQuery.Selector
+		| JQuery.TypeOrArray<Element>
+		| JQuery
+		| ((this: Element, index: number, element: Element) => boolean);
+	importCondition?(
 		$elements: JQuery,
 		$container: JQuery,
-		stats: {
-			moduleName: string;
-			importConditionAllowed: boolean;
-		}
+		stats: DMIModuleStats
 	): boolean;
 }
 
-interface DynamicModulesImportOptions {
-	resolver(fileName: string): Promise<any>;
+interface DMIOptions {
+	resolver(fileName: keyof DMIOptions['modules']): Promise<any>;
 	selector: JQuery.Selector;
-	modules: Record<string, DynamicModulesImportModule>;
+	modules: Record<string, DMIModule>;
 	debug?: boolean;
 	loadedCssClass?: string;
 	pendingCssClass?: string;
 	executedCssClass?: string;
+	errorCssClass?: string;
 }
 
 interface DynamicModulesImport {
 	readonly debug: boolean;
 	readonly selector: JQuery.Selector;
 	readonly pendingCssClass: string;
+	readonly pendingEvent: string;
 	readonly loadedCssClass: string;
-	readonly executedCssClass: string;
+	readonly loadedEvent: string;
+	readonly errorCssClass: string;
+	readonly errorEvent: string;
 	importModule(
-		moduleFileName: string,
-		$container: JQuery,
-		force?: boolean
+		fileName: keyof DMIOptions['modules'],
+		$container?: JQuery,
+		ignoreImportCondition?: boolean
+	): Promise<any>;
+	importAll(
+		$container?: JQuery,
+		awaitAll?: boolean,
+		ignoreImportCondition?: boolean
 	): Promise<any>;
 }
-
-// -----------------------------------------------------------------------------
-// Helpers
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Create
 // -----------------------------------------------------------------------------
 
 export const create = ({
+	resolver,
 	modules,
 	selector,
 	debug,
 	pendingCssClass,
 	loadedCssClass,
-	executedCssClass
-}: DynamicModulesImportOptions): DynamicModulesImport => {
-	const log = (message: string) => {
+	errorCssClass
+}: DMIOptions): DynamicModulesImport => {
+	const _allowedCache = new Set<string>();
+
+	// -----------------------------------------------------------------------------
+	// Helpers
+	// -----------------------------------------------------------------------------
+
+	const _log = (message: string) => {
 		if (debug) {
-			console.log(message);
+			console.log('[DMI]: ' + message);
 		}
 	};
 
-	const getElements = ($container: JQuery, selector: JQuery.Selector): JQuery => {
+	const _getElements = ($container: JQuery): JQuery => {
 		const $elements = $container.find(selector);
 		if ($elements.length <= 0) {
-			log(`No import elements with selector "${selector}"`);
+			_log(`No import elements with selector "${selector}"`);
 		}
 		return $elements;
 	};
 
-	const resolveWithErrors = (moduleName: string) => {
-		console.warn(
-			`ModuleDynamicImport WARN! Module "${moduleName}" resolved width errors!!!`
-		);
+	const _resolveWithErrors = (moduleName: string, message: string | Error) => {
+		console.warn(`[DMI]: Module "${moduleName}" resolved width errors!!!`);
+		console.error(message);
 		return Promise.resolve();
 	};
 
-	const importFn = (
-		moduleName: string,
+	const _markAsPending = ($elements: JQuery, stats: DMIModuleStats) => {
+		$elements
+			.removeClass([DMI.loadedEvent, DMI.errorCssClass])
+			.addClass(DMI.pendingCssClass)
+			.trigger(DMI.pendingEvent, { stats });
+	};
+
+	const _markAsLoaded = ($elements: JQuery, stats: DMIModuleStats) => {
+		$elements
+			.removeClass([DMI.pendingCssClass, DMI.errorCssClass])
+			.addClass(DMI.loadedCssClass)
+			.trigger(DMI.loadedEvent, { stats });
+	};
+
+	const _markAsError = ($elements: JQuery, stats: DMIModuleStats) => {
+		$elements
+			.removeClass([DMI.pendingCssClass, DMI.loadedCssClass])
+			.addClass(DMI.errorCssClass)
+			.trigger(DMI.errorEvent, { stats });
+	};
+
+	const _importFn = (
+		moduleName: keyof typeof modules,
 		$elements: JQuery,
 		$container: JQuery,
-		force: boolean
+		useImportCondition: boolean
 	) => {
-		// eslint-disable-next-line no-prototype-builtins
-		if (modules.hasOwnProperty(moduleName)) {
-			return Promise.resolve();
-		} else {
-			return resolveWithErrors(moduleName);
+		if (!modules.hasOwnProperty(moduleName)) {
+			return _resolveWithErrors(moduleName, `Undefined moduleName "${moduleName}"`);
 		}
+		const module = modules[moduleName];
+		const $moduleElements = $elements.filter(module.filter);
+		const stats: DMIModuleStats = { moduleName };
+
+		if (
+			useImportCondition &&
+			!_allowedCache.has(moduleName) &&
+			typeof module.importCondition === 'function'
+		) {
+			const allowed = module.importCondition($moduleElements, $container, stats);
+			if (allowed !== true) {
+				_log(`module "${moduleName}" skipped by ".importCondition()"`);
+				return Promise.resolve();
+			}
+		}
+
+		_allowedCache.add(moduleName);
+		_markAsPending($moduleElements, stats);
+		_log(`module "${moduleName}" is pending`);
+		return resolver(moduleName)
+			.then(({ default: _default }) => {
+				if (typeof _default !== 'function') {
+					_markAsError($moduleElements, stats);
+					return _resolveWithErrors(
+						moduleName,
+						`imported module "${moduleName}" - must export default method`
+					);
+				}
+				_markAsLoaded($moduleElements, stats);
+				_default($moduleElements);
+				return Promise.resolve();
+			})
+			.catch((err) => {
+				return _resolveWithErrors(moduleName, err);
+			});
 	};
 
 	const DMI: DynamicModulesImport = {
@@ -98,26 +167,68 @@ export const create = ({
 		get selector() {
 			return selector;
 		},
+
 		get pendingCssClass() {
-			return pendingCssClass || '_import-pending';
+			return pendingCssClass || '_dmi-is-pending';
 		},
+		get pendingEvent() {
+			return 'dmi:pending';
+		},
+
 		get loadedCssClass() {
-			return loadedCssClass || '_import-loaded';
+			return loadedCssClass || '_dmi-is-loaded';
 		},
-		get executedCssClass() {
-			return executedCssClass || '_import-executed';
+		get loadedEvent() {
+			return 'dmi:loaded';
 		},
-		importModule(moduleName: string, $container = JQuery('body'), force?: boolean) {
-			const $elements = getElements($container, this.selector);
+
+		get errorCssClass() {
+			return errorCssClass || '_dmi-has-error';
+		},
+		get errorEvent() {
+			return 'dmi:error';
+		},
+
+		importModule(moduleName, $container = JQuery('body'), ignoreImportCondition) {
+			const $elements = _getElements($container);
 			if ($elements.length === 0) {
+				_log('No elements');
 				return Promise.resolve();
 			}
-			return importFn(moduleName, $elements, $container, force === true);
+			return _importFn(
+				moduleName,
+				$elements,
+				$container,
+				ignoreImportCondition !== true
+			);
+		},
+
+		importAll($container = JQuery('body'), awaitAll = false, ignoreImportCondition) {
+			const $elements = _getElements($container);
+			if ($elements.length === 0) {
+				_log('No elements');
+				return Promise.resolve();
+			}
+
+			const _getAll = () =>
+				Object.keys(modules).map((moduleName) =>
+					_importFn(
+						moduleName,
+						$elements,
+						$container,
+						ignoreImportCondition !== true
+					)
+				);
+
+			if (awaitAll) {
+				return Promise.all(_getAll());
+			} else {
+				_getAll();
+				return Promise.resolve();
+			}
 		}
 	};
 
 	DMI.importModule.bind(DMI);
 	return DMI;
 };
-
-const dmi = create();
