@@ -122,6 +122,9 @@ export const create = ({
 		}
 		const module = modules[moduleName];
 		const $moduleElements = $elements.filter(module.filter);
+		if ($moduleElements.length === 0) {
+			return Promise.resolve();
+		}
 		const stats: DMIModuleStats = { moduleName };
 
 		if (

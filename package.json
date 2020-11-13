@@ -1,6 +1,6 @@
 {
   "name": "@wezom/dynamic-modules-import",
-  "version": "0.2.1-beta",
+  "version": "0.2.2-beta",
   "description": "A library for defining the modules used on the page and loading them asynchronously on demand",
   "main": "dist/ts/index.ts",
   "files": [
@@ -15,6 +15,8 @@
     "build:tsc-es5": "tsc --project tsconfig-es5.json",
     "build:ts": "cp-cli src/index.ts dist/ts/index.ts",
     "build:finalize": "prettier dist/**/*.{d.ts,js} --check --write",
+    "----------------------------------------------- SERVE": "SECTION",
+    "serve": "webpack serve",
     "----------------------------------------------- TEST": "SECTION",
     "test": "npm run prettier && npm run eslint-js && npm run eslint-ts && npm run jest",
     "test:autofix": "npm run prettier:autofix && npm run eslint-js:autofix && npm run eslint-ts:autofix && npm run jest:coverage",
@@ -66,11 +68,17 @@
     "del-cli": "^3.0.1",
     "eslint": "^7.13.0",
     "eslint-plugin-jest": "^24.1.0",
+    "from-cwd": "^1.0.1",
+    "html-webpack-plugin": "^4.5.0",
     "istanbul-badges-readme": "^1.0.5",
     "jest": "^25.5.3",
     "jquery": "^3.4.1",
     "prettier": "^2.0.5",
     "ts-jest": "^25.4.0",
-    "typescript": "^3.8.3"
+    "ts-loader": "^8.0.11",
+    "typescript": "^3.8.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
