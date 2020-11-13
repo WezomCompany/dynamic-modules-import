@@ -212,7 +212,7 @@ You own way to determinate for allowed importing
 const modules = {
     moduleA: {
         importCondition: () => {
-            // i want load lib only if more than 20 HTML <p> elements on current page
+            // I want to load module only if there more than 20 HTML <p> elements on current invoke
             return $('p').length > 20; 
         },
         // ...
