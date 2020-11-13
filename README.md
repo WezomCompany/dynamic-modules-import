@@ -13,6 +13,24 @@ _A library for defining the modules used on the page and loading them asynchrono
 | ------------------------------------------------------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- |
 | ![Statements](https://img.shields.io/badge/Coverage-30%25-red.svg) | ![Branches](https://img.shields.io/badge/Coverage-40.91%25-red.svg) | ![Functions](https://img.shields.io/badge/Coverage-20%25-red.svg) | ![Lines](https://img.shields.io/badge/Coverage-30%25-red.svg) |
 
+## Table of Content:
+
+1. [Usage](#usage)
+    1. [Install npm package](#install-npm-package)
+    1. [Import to your codebase](#import-to-your-codebase)
+    1. [Create](#create)
+    1. [Modules that are imported](#modules-that-are-imported)
+1. [Create options](#create-options)
+    1. [selector](#selector)
+    1. [modules](#modules)
+    1. [debug](#debug)
+    1. [pendingCssClass](#pendingcssclass)
+    1. [loadedCssClass](#loadedcssclass)
+    1. [errorCssClass](#errorcssclass)
+1. [API](#api)
+    1. [Properties](#properties)
+    1. [Methods](#methods)
+
 ## Usage
 
 ### Install npm package
@@ -118,7 +136,7 @@ export default ($elements: JQuery) => {
 _required_  
 type: `JQuery.Selector`
 
-### modules
+### `modules`
 
 _required_  
 type: `Object<DMIModule>`
@@ -141,7 +159,7 @@ interface DMIModule {
 }
 ```
 
-#### modules[moduleName].filter
+#### `modules[moduleName].filter`
 
 Method that has signature like [`jQuery.fn.filter`](https://api.jquery.com/filter/) and works in same way;
 
@@ -161,7 +179,7 @@ const modules = {
 }
 ```
 
-#### modules[moduleName].importFn
+#### `modules[moduleName].importFn`
 
 You own method for importing module
 
@@ -182,7 +200,7 @@ const modules = {
 }
 ```
 
-#### modules[moduleName].importCondition
+#### `modules[moduleName].importCondition`
 
 You own way to determinate for allowed importing
 
@@ -203,25 +221,25 @@ const modules = {
 ```
 
 
-### debug
+### `debug`
 
 _optional_  
 type: `boolean`  
 default: `false`
 
-### loadedCssClass
-
-_optional_  
-type: `string`  
-default: `'_dmi-is-loaded'`
-
-### pendingCssClass
+### `pendingCssClass`
 
 _optional_  
 type: `string`  
 default: `'_dmi-is-pending'`
 
-### errorCssClass
+### `loadedCssClass`
+
+_optional_  
+type: `string`  
+default: `'_dmi-is-loaded'`
+
+### `errorCssClass`
 
 _optional_  
 type: `string`  
@@ -239,17 +257,17 @@ All props are readonly. You cannot change them after creation.
 #### `debug`
 
 type: `boolean`  
-value: depends on create option `debug`
+value: depends on [create option `debug`](#debug)
 
 #### `selector`
 
 type: `JQuery.Selector`  
-value: depends on create option `selector`
+value: depends on [create option `selector`](#selector)
 
 #### `pendingCssClass`
 
 type: `string`  
-value: depends on create option `pendingCssClass`
+value: depends on [create option `pendingCssClass`](#pendingcssclass)
 
 #### `pendingEvent`
 
@@ -259,7 +277,7 @@ value: `"dmi:pending"`
 #### `loadedCssClass`
 
 type: `string`  
-value: depends on create option `loadedCssClass`
+value: depends on [create option `loadedCssClass`](#loadedcssclass)
 
 #### `loadedEvent`
 
@@ -269,7 +287,7 @@ value: `"dmi:loaded"`
 #### `errorCssClass`
 
 type: `string`  
-value: depends on create option `errorCssClass`
+value: depends on [create option `errorCssClass`](#errorcssclass)
 
 #### `errorEvent`
 
