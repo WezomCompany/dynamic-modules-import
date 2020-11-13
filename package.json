@@ -1,6 +1,6 @@
 {
   "name": "@wezom/dynamic-modules-import",
-  "version": "0.2.0-beta",
+  "version": "0.2.1-beta",
   "description": "A library for defining the modules used on the page and loading them asynchronously on demand",
   "main": "dist/ts/index.ts",
   "files": [

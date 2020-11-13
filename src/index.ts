@@ -26,9 +26,8 @@ interface DMIOptions {
 	selector: JQuery.Selector;
 	modules: Record<string, DMIModule>;
 	debug?: boolean;
-	loadedCssClass?: string;
 	pendingCssClass?: string;
-	executedCssClass?: string;
+	loadedCssClass?: string;
 	errorCssClass?: string;
 }
 
@@ -42,7 +41,7 @@ interface DynamicModulesImport {
 	readonly errorCssClass: string;
 	readonly errorEvent: string;
 	importModule(
-		fileName: keyof DMIOptions['modules'],
+		moduleName: string,
 		$container?: JQuery,
 		ignoreImportCondition?: boolean
 	): Promise<any>;

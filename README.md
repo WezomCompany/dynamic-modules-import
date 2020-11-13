@@ -1,6 +1,6 @@
 # @wezom/dynamic-modules-import
 
-![Typescript support badge](https://img.shields.io/badge/types-TypeScript-blue)
+![Typescript first](https://img.shields.io/badge/TypeScript-First-blue)
 [![BSD-3-Clause License badge](https://img.shields.io/github/license/WezomAgency/dynamic-modules-import)](https://github.com/WezomAgency/dynamic-modules-import/blob/master/LICENSE)
 [![NPM package badge](https://img.shields.io/badge/npm-install-orange.svg)](https://www.npmjs.com/package/@wezom/dynamic-modules-import)
 ![Test and Build](https://github.com/WezomAgency/dynamic-modules-import/workflows/Test%20and%20Build/badge.svg)
@@ -26,9 +26,9 @@ npm i @wezom/dynamic-modules-import
 By default, we distribute our lib as is - original TypeScript files, without transpiling to ES5 or ES6.
 
 ```ts
-// import original ts code
-// but requires not to be exclude in `node_modules`
-// chelk your `tsconfig.json`
+// Import original ts code
+// but requires to be not exclude in `node_modules`.
+// Chelk your `tsconfig.json`
 import { create } from '@wezom/dynamic-modules-import';
 ```
 
@@ -36,10 +36,10 @@ You can import compiled files from special folders.
 
 ```js
 // ES6: const, let, spread, rest and other modern JavaScript features
-// but requires addinitoal transpiling with your codebase
-// check your `babebl-loader` (if your use webpack as bandler)
+// but requires to be not exclude in `node_modules`.
+// Check your `babebl-loader` (if your use webpack as bandler)
 import { create } from '@wezom/dynamic-modules-import/dist/es-6';
-// or ES5: no ES6 features but ready for use without transpiling
+// or ES5: no ES6 features but ready for use as is, without transpiling
 import { create } from '@wezom/dynamic-modules-import/dist/es-5';
 ```
 
@@ -52,17 +52,17 @@ We recommend, that create and setup DMI object in a single module and then impor
 import { create } from '@wezom/dynamic-modules-import';
 
 export default create({
-    selector: '.my-js-selector',
-    modules: {
-        handleFormModule: {
-            filter: 'form',
-            importFn: () => import('modules/form-module')
-        },
-        handleSliderModule: {
-            filter: '.js-slider',
-            importFn: () => import('modules/slider-module')
-        }
-    }
+	selector: '.my-js-selector',
+	modules: {
+		handleFormModule: {
+			filter: 'form',
+			importFn: () => import('modules/form-module')
+		},
+		handleSliderModule: {
+			filter: '.js-slider',
+			importFn: () => import('modules/slider-module')
+		}
+	}
 });
 ```
 
@@ -72,30 +72,30 @@ import $ from 'jquery';
 import DMI from 'modules/dmi';
 
 $(() => {
-    const $root = $('#root');
-    DMI.importAll($root);
+	const $root = $('#root');
+	DMI.importAll($root);
 });
 ```
 
 Also, you can import each module directly with your custom behavior
 
 ```ts
-// modules/some-module
+// modules/some-module.ts
 import $ from 'jquery';
 import DMI from 'modules/dmi';
 
 export default () => {
-    const $someModuleContainer = $('#some-module-container');
-    const $button = $someModuleContainer.find('button');
-    $button.on('click', () => {
-        DMI.importModule('handleSomeModule', $someModuleContainer);
-    });
-}
+	const $someModuleContainer = $('#some-module-container');
+	const $button = $someModuleContainer.find('button');
+	$button.on('click', () => {
+		DMI.importModule('handleSomeModule', $someModuleContainer);
+	});
+};
 ```
 
 #### Modules that are imported
 
-Modules that are imported must export default method!  
+Your dynamic modules must export `default` method!  
 Method will receive jQuery elements as first argument.  
 That will be elements for the current module filtered by `filter` prop (see "create" section)
 
@@ -103,6 +103,199 @@ That will be elements for the current module filtered by `filter` prop (see "cre
 // modules/slider-module.ts
 import 'heavy-slider-from-node_modules';
 export default ($elements: JQuery) => {
-    $elements.slider({/* options */});
+	$elements.slider({
+		/* options */
+	});
+};
+```
+
+---
+
+## Create options
+
+### `selector`
+
+_required_  
+type: `JQuery.Selector`
+
+### modules
+
+_required_  
+type: `Object<DMIModule>`
+
+Each module provided by DMIModule interface
+
+```ts
+interface DMIModule {
+	filter:
+		| JQuery.Selector
+		| JQuery.TypeOrArray<Element>
+		| JQuery
+		| ((this: Element, index: number, element: Element) => boolean);
+	importFn(stats: DMIModuleStats): Promise<any>;
+	importCondition?(
+		$elements: JQuery,
+		$container: JQuery,
+		stats: DMIModuleStats
+	): boolean;
 }
+```
+
+#### modules[moduleName].filter
+
+Method that has signature like [`jQuery.fn.filter`](https://api.jquery.com/filter/) and works in same way;
+
+```ts
+// example
+const modules = {
+    moduleA: {
+        filter: 'form',
+        // ...
+    },
+    moduleB: {
+        filter(index) {
+            return $("strong", this).length === 1;
+        },
+        // ...
+    }
+}
+```
+
+#### modules[moduleName].importFn
+
+You own method for importing module
+
+```ts
+// example
+const modules = {
+    moduleA: {
+        importFn: () => import('my-module'),
+        // ...
+    },
+    moduleB: {
+        importFn: async () => {
+            await someGlobals();
+            return import('my-dependent-module'); 
+        },
+        // ...
+    }
+}
+```
+
+#### modules[moduleName].importCondition
+
+You own way to determinate for allowed importing
+
+> Note! DMI will not observe by any changes that can be happen in your page or app.
+> So you need yourself re-invoke DMI if something changed and you need to react that with your `importCondion`
+
+```ts
+// example
+const modules = {
+    moduleA: {
+        importCondition: () => {
+            // i want load lib only if more than 20 HTML <p> elements on current page
+            return $('p').length > 20; 
+        },
+        // ...
+    }
+}
+```
+
+
+### debug
+
+_optional_  
+type: `boolean`  
+default: `false`
+
+### loadedCssClass
+
+_optional_  
+type: `string`  
+default: `'_dmi-is-loaded'`
+
+### pendingCssClass
+
+_optional_  
+type: `string`  
+default: `'_dmi-is-pending'`
+
+### errorCssClass
+
+_optional_  
+type: `string`  
+default: `'_dmi-has-error'`
+
+
+---
+
+## API
+
+### Properties
+
+All props are readonly. You cannot change them after creation.
+
+#### `debug`
+
+type: `boolean`  
+value: depends on create option `debug`
+
+#### `selector`
+
+type: `JQuery.Selector`  
+value: depends on create option `selector`
+
+#### `pendingCssClass`
+
+type: `string`  
+value: depends on create option `pendingCssClass`
+
+#### `pendingEvent`
+
+type: `string`  
+value: `"dmi:pending"`
+
+#### `loadedCssClass`
+
+type: `string`  
+value: depends on create option `loadedCssClass`
+
+#### `loadedEvent`
+
+type: `string`  
+value: `"dmi:loaded"`
+
+#### `errorCssClass`
+
+type: `string`  
+value: depends on create option `errorCssClass`
+
+#### `errorEvent`
+
+type: `string`  
+value: `"dmi:error"`
+
+### Methods
+
+#### importAll()
+
+```
+// signature
+importAll(
+    $container?: JQuery,
+    awaitAll?: boolean,
+    ignoreImportCondition?: boolean
+): Promise<any>;
+```
+
+#### importModule()
+
+```
+// signature
+importModule(
+    moduleName: string,
+    $container?: JQuery,
+    ignoreImportCondition?: boolean
+): Promise<any>;
 ```
