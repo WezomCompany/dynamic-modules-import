@@ -46,7 +46,7 @@ By default, we distribute our lib as is - original TypeScript files, without tra
 ```ts
 // Import original ts code
 // but requires to be not exclude in `node_modules`.
-// Chelk your `tsconfig.json`
+// Check your `tsconfig.json`
 import { create } from '@wezom/dynamic-modules-import';
 ```
 
