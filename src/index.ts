@@ -9,12 +9,12 @@ interface DMIModuleStats {
 }
 
 interface DMIModule {
-	fileName: string;
 	filter:
 		| JQuery.Selector
 		| JQuery.TypeOrArray<Element>
 		| JQuery
 		| ((this: Element, index: number, element: Element) => boolean);
+	importFn(stats: DMIModuleStats): Promise<any>;
 	importCondition?(
 		$elements: JQuery,
 		$container: JQuery,
@@ -23,7 +23,6 @@ interface DMIModule {
 }
 
 interface DMIOptions {
-	resolver(fileName: keyof DMIOptions['modules']): Promise<any>;
 	selector: JQuery.Selector;
 	modules: Record<string, DMIModule>;
 	debug?: boolean;
@@ -59,7 +58,6 @@ interface DynamicModulesImport {
 // -----------------------------------------------------------------------------
 
 export const create = ({
-	resolver,
 	modules,
 	selector,
 	debug,
@@ -142,7 +140,8 @@ export const create = ({
 		_allowedCache.add(moduleName);
 		_markAsPending($moduleElements, stats);
 		_log(`module "${moduleName}" is pending`);
-		return resolver(moduleName)
+		return module
+			.importFn(stats)
 			.then(({ default: _default }) => {
 				if (typeof _default !== 'function') {
 					_markAsError($moduleElements, stats);

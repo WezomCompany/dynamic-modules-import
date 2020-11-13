@@ -1,14 +1,20 @@
 {
   "name": "@wezom/dynamic-modules-import",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-beta",
   "description": "A library for defining the modules used on the page and loading them asynchronously on demand",
-  "main": "dist/es6/index.js",
+  "main": "dist/ts/index.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc && tsc --project tsconfig-es5.json",
+    "build": "npm run build:clean && npm run build:tsc-es6 && npm run build:tsc-es5 && npm run build:ts && npm run build:finalize",
+    "----------------------------------------------- BUIL-STEPS": "SECTION",
+    "build:clean": "del-cli ./dist",
+    "build:tsc-es6": "tsc",
+    "build:tsc-es5": "tsc --project tsconfig-es5.json",
+    "build:ts": "cp-cli src/index.ts dist/ts/index.ts",
+    "build:finalize": "prettier dist/**/*.{d.ts,js} --check --write",
     "----------------------------------------------- TEST": "SECTION",
     "test": "npm run prettier && npm run eslint-js && npm run eslint-ts && npm run jest",
     "test:autofix": "npm run prettier:autofix && npm run eslint-js:autofix && npm run eslint-ts:autofix && npm run jest:coverage",
@@ -21,11 +27,7 @@
     "prettier:autofix": "npm run prettier -- --write",
     "jest": "jest",
     "jest:coverage": "jest --coverage --collectCoverageFrom=\"./src/index.ts\"",
-    "-----------------------------------------------PRE": "DIVIDER",
-    "prebuild": "del-cli ./dist",
     "precoverage": "del-cli ./coverage",
-    "-----------------------------------------------POST": "DIVIDER",
-    "postbuild": "prettier dist/**/*.{d.ts,js} --check --write",
     "postjest:coverage": "istanbul-badges-readme"
   },
   "repository": {
@@ -60,18 +62,15 @@
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "babel-eslint": "^10.1.0",
+    "cp-cli": "^2.0.0",
     "del-cli": "^3.0.1",
     "eslint": "^7.13.0",
     "eslint-plugin-jest": "^24.1.0",
-    "html-webpack-plugin": "^4.5.0",
     "istanbul-badges-readme": "^1.0.5",
     "jest": "^25.5.3",
     "jquery": "^3.4.1",
     "prettier": "^2.0.5",
     "ts-jest": "^25.4.0",
-    "typescript": "^3.8.3",
-    "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "typescript": "^3.8.3"
   }
 }

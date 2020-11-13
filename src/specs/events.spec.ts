@@ -3,7 +3,6 @@
 // -----------------------------------------------------------------------------
 
 import { create } from '../index';
-import { fakeResolver } from './helpers';
 
 // -----------------------------------------------------------------------------
 // Tests
@@ -12,7 +11,6 @@ import { fakeResolver } from './helpers';
 describe('pendingEvent', () => {
 	test('constant event name', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -23,7 +21,6 @@ describe('pendingEvent', () => {
 describe('loadedEvent', () => {
 	test('constant event name', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -34,7 +31,6 @@ describe('loadedEvent', () => {
 describe('errorEvent', () => {
 	test('constant event name', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});

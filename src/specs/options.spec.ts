@@ -3,7 +3,6 @@
 // -----------------------------------------------------------------------------
 
 import { create } from '../index';
-import { fakeResolver } from './helpers';
 
 // -----------------------------------------------------------------------------
 // Tests
@@ -12,7 +11,6 @@ import { fakeResolver } from './helpers';
 describe('option "pendingCssClass"', () => {
 	test('default value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -20,7 +18,6 @@ describe('option "pendingCssClass"', () => {
 	});
 	test('custom value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import',
 			pendingCssClass: '_my-custom-pending-class-name'
@@ -32,7 +29,6 @@ describe('option "pendingCssClass"', () => {
 describe('option "loadedCssClass"', () => {
 	test('default value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -40,7 +36,6 @@ describe('option "loadedCssClass"', () => {
 	});
 	test('custom value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import',
 			loadedCssClass: '_my-custom-loaded-class-name'
@@ -52,7 +47,6 @@ describe('option "loadedCssClass"', () => {
 describe('option "errorCssClass"', () => {
 	test('default value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -60,7 +54,6 @@ describe('option "errorCssClass"', () => {
 	});
 	test('custom value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import',
 			errorCssClass: '_my-custom-error-class-name'
@@ -72,7 +65,6 @@ describe('option "errorCssClass"', () => {
 describe('option "selector"', () => {
 	test('custom value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -83,7 +75,6 @@ describe('option "selector"', () => {
 describe('option "debug"', () => {
 	test('default value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import'
 		});
@@ -91,7 +82,6 @@ describe('option "debug"', () => {
 	});
 	test('custom value', () => {
 		const dmi = create({
-			resolver: fakeResolver,
 			modules: {},
 			selector: '.js-import',
 			debug: true
