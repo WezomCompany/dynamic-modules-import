@@ -1,9 +1,9 @@
 # @wezom/dynamic-modules-import
 
 ![Typescript first](https://img.shields.io/badge/TypeScript-First-blue)
-[![BSD-3-Clause License badge](https://img.shields.io/github/license/WezomAgency/dynamic-modules-import)](https://github.com/WezomAgency/dynamic-modules-import/blob/master/LICENSE)
+[![BSD-3-Clause License badge](https://img.shields.io/github/license/WezomCompany/dynamic-modules-import)](https://github.com/WezomCompany/dynamic-modules-import/blob/master/LICENSE)
 [![NPM package badge](https://img.shields.io/badge/npm-install-orange.svg)](https://www.npmjs.com/package/@wezom/dynamic-modules-import)
-![Test and Build](https://github.com/WezomAgency/dynamic-modules-import/workflows/Test%20and%20Build/badge.svg)
+![Test and Build](https://github.com/WezomCompany/dynamic-modules-import/workflows/Test%20and%20Build/badge.svg)
 
 _A library for defining the modules used on the page and loading them asynchronously on demand_
 

@@ -1,6 +1,6 @@
 {
   "name": "@wezom/dynamic-modules-import",
-  "version": "0.2.2-beta",
+  "version": "0.2.3-beta",
   "description": "A library for defining the modules used on the page and loading them asynchronously on demand",
   "main": "dist/ts/index.ts",
   "files": [
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WezomAgency/dynamic-modules-import.git"
+    "url": "git+https://github.com/WezomCompany/dynamic-modules-import.git"
   },
   "publishConfig": {
     "access": "public"
@@ -48,11 +48,11 @@
     "client"
   ],
   "author": "Oleg Dutchenko <dutchenko.o.dev@gmail.com>",
-  "license": "MIT",
+  "license": "BSD 3-Clause License",
   "bugs": {
-    "url": "https://github.com/WezomAgency/dynamic-modules-import/issues"
+    "url": "https://github.com/WezomCompany/dynamic-modules-import/issues"
   },
-  "homepage": "https://github.com/WezomAgency/dynamic-modules-import#readme",
+  "homepage": "https://github.com/WezomCompany/dynamic-modules-import#readme",
   "peerDependencies": {
     "jquery": "^3.4.1"
   },
