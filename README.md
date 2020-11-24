@@ -1,4 +1,4 @@
-# @wezom/dynamic-modules-import
+# dynamic-modules-import
 
 ![Typescript first](https://img.shields.io/badge/TypeScript-First-blue)
 [![BSD-3-Clause License badge](https://img.shields.io/github/license/WezomCompany/dynamic-modules-import)](https://github.com/WezomCompany/dynamic-modules-import/blob/master/LICENSE)
